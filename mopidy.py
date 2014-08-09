@@ -53,7 +53,7 @@ class Mopidy(object):
 
     def play_new_playlist(self):
         print self.clear_tracklist()
-        print self.playlist = self.get_random_playlist()
+        self.playlist = self.get_random_playlist()
         print self.add_to_tracklist(self.playlist)
         print self.play()
 
