@@ -7,7 +7,7 @@ MOPIDY_URL = 'http://localhost:6680/mopidy/rpc'
 class Mopidy(object):
 
     def __init__(self):
-        self.playlists = None#self.get_playlists()
+        self.playlists = self.get_playlists()
         self.playlist = None
 
     def send(self, method, params={}):
@@ -52,8 +52,8 @@ class Mopidy(object):
         return self.send('core.playback.set_volume', params=params)
 
     def play_new_playlist(self):
-        self.clear_tracklist()
-        self.playlist = self.get_random_playlist()
-        self.add_to_tracklist(self.playlist)
-        self.play()
+        print self.clear_tracklist()
+        print self.playlist = self.get_random_playlist()
+        print self.add_to_tracklist(self.playlist)
+        print self.play()
 

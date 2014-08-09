@@ -11,21 +11,20 @@ GPIO.setup(PLAY_PIN, GPIO.IN)
 GPIO.setup(LIGHT_PIN, GPIO.OUT)
 # GPIO.setup(NEW_BUTTON_PIN, GPIO.IN)
 
-GPIO.setup(17, GPIO.IN)
+# GPIO.setup(17, GPIO.IN)
+# GPIO.setup(24, GPIO.IN)
 
 print('Started...')
 print('Getting Playlists...')
 player = Mopidy()
 print('Started')
 
-# player.play_new_playlist()
+player.play_new_playlist()
 # print player.set_volume(100)
 
 play_input_prev = 1
 while True:
     play_input = GPIO.input(PLAY_PIN)
-
-    print GPIO.input(17)
 
     if play_input_prev != play_input and not play_input:
         print("Play Button Pressed")
