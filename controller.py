@@ -2,7 +2,7 @@ import time
 import RPi.GPIO as GPIO
 from mopidy import Mopidy
 
-BUTTON_PIN = 25
+PLAY_PIN = 25
 LIGHT_PIN = 22
 #NEW_BUTTON_PIN = 24
 
@@ -19,24 +19,23 @@ print('Started')
 player.play_new_playlist()
 # print player.set_volume(100)
 
-prev_input = 1
+play_input_prev = 1
 while True:
-    input = GPIO.input(BUTTON_PIN)
+    play_input = GPIO.input(PLAY_PIN)
 
-    if prev_input != input and not input:
-        print("Button Pushed DOWN")
+    if play_input_prev != play_input and not play_input:
+        print("Play Button Pressed")
         GPIO.output(LIGHT_PIN, GPIO.HIGH)
 	
-        state = get_state()
-        print state
+        state = player.get_state()
         if state == 'paused' or state == 'stopped':
             player.resume()
         else:
             player.pause()
             
-    elif prev_input != input and input:
-        print("Button Released")
+    elif play_input_prev != play_input and play_input:
+        print("Play Button Released")
         GPIO.output(LIGHT_PIN, GPIO.LOW)
 
-    prev_input = input
+    play_input_prev = play_input
     time.sleep(0.05)
