@@ -59,8 +59,8 @@ class Mopidy(object):
         return self.send('core.playback.set_volume', params=params)
 
     def play_new_playlist(self):
-        self.clear_tracklist()
-        self.playlist = self.get_random_playlist()
-        self.add_to_tracklist(self.playlist)
-        self.play()
+        print self.clear_tracklist()
+        print self.playlist = self.get_random_playlist()
+        print self.add_to_tracklist(self.playlist)
+        print self.play()
 

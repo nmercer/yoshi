@@ -7,11 +7,12 @@ LIGHT_PIN = 22
 #NEW_BUTTON_PIN = 24
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(BUTTON_PIN, GPIO.IN)
+GPIO.setup(PLAY_PIN, GPIO.IN)
 GPIO.setup(LIGHT_PIN, GPIO.OUT)
 # GPIO.setup(NEW_BUTTON_PIN, GPIO.IN)
 
-GPIO.setup(17, GPIO.IN)
+# GPIO.setup(17, GPIO.IN)
+# GPIO.setup(24, GPIO.IN)
 
 print('Started...')
 print('Getting Playlists...')
@@ -24,8 +25,6 @@ player.play_new_playlist()
 play_input_prev = 1
 while True:
     play_input = GPIO.input(PLAY_PIN)
-
-    print GPIO.input(17)
 
     if play_input_prev != play_input and not play_input:
         print("Play Button Pressed")
