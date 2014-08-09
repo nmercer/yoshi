@@ -1,6 +1,5 @@
 import requests
 import json
-import time
 import random
 
 MOPIDY_URL = 'http://localhost:6680/mopidy/rpc'
@@ -8,7 +7,7 @@ MOPIDY_URL = 'http://localhost:6680/mopidy/rpc'
 class Mopidy(object):
 
     def __init__(self):
-        self.playlists = self.get_playlists()
+        self.playlists = None #self.get_playlists()
         self.playlist = None
 
     def send(self, method, params={}):
@@ -47,6 +46,10 @@ class Mopidy(object):
 
     def play(self):
         return self.send('core.playback.play')
+
+    def set_volume(self, volume):
+        params = {'volume':volume}
+        return self.send('core.playback.volume', params=params)
 
     def play_new_playlist(self):
         self.clear_tracklist()
