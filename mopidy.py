@@ -9,6 +9,7 @@ class Mopidy(object):
     def __init__(self):
         self.playlists = self.get_playlists()
         self.playlist = None
+        self.volume = 100
 
     def send(self, method, params={}):
         data = json.dumps({"jsonrpc": "2.0", "id": 1, "method": str(method), "params":params})
@@ -48,7 +49,13 @@ class Mopidy(object):
         return self.send('core.playback.play')
 
     def set_volume(self, volume):
-        params = {'volume':volume}
+        self.volume += volume
+        if self.volume < 0:
+            self.volume = 0
+        elif self.volume > 100:
+            self.volume = 100
+
+        params = {'volume':self.volume}
         return self.send('core.playback.set_volume', params=params)
 
     def play_new_playlist(self):
