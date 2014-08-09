@@ -7,7 +7,7 @@ MOPIDY_URL = 'http://localhost:6680/mopidy/rpc'
 class Mopidy(object):
 
     def __init__(self):
-        self.playlists = self.get_playlists()
+        self.playlists = None#self.get_playlists()
         self.playlist = None
 
     def send(self, method, params={}):

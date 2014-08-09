@@ -7,7 +7,7 @@ LIGHT_PIN = 22
 #NEW_BUTTON_PIN = 24
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(BUTTON_PIN, GPIO.IN)
+GPIO.setup(PLAY_PIN, GPIO.IN)
 GPIO.setup(LIGHT_PIN, GPIO.OUT)
 # GPIO.setup(NEW_BUTTON_PIN, GPIO.IN)
 
@@ -16,7 +16,7 @@ print('Getting Playlists...')
 player = Mopidy()
 print('Started')
 
-player.play_new_playlist()
+# player.play_new_playlist()
 # print player.set_volume(100)
 
 play_input_prev = 1
