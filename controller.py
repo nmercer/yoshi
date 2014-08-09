@@ -16,8 +16,8 @@ print('Getting Playlists...')
 player = Mopidy()
 print('Started')
 
-# player.play_new_playlist()
-player.set_volume(1)
+player.play_new_playlist()
+# print player.set_volume(100)
 
 prev_input = 1
 while True:
