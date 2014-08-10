@@ -59,8 +59,14 @@ class Mopidy(object):
         return self.send('core.playback.set_volume', params=params)
 
     def play_new_playlist(self):
-        print self.clear_tracklist()
+        self.clear_tracklist()
         self.playlist = self.get_random_playlist()
-        print self.add_to_tracklist(self.playlist)
-        print self.play()
+        self.add_to_tracklist(self.playlist)
+        self.play()
 
+    def next_song(self):
+        self.send('core.playback.next')
+
+    def shuffle(self, shuffle):
+        params = {'shuffle':shuffle}
+        self.send('core.tracklist.set_shuffle', params=params)
