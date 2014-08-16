@@ -6,8 +6,9 @@ MOPIDY_URL = 'http://localhost:6680/mopidy/rpc'
 
 class Mopidy(object):
 
-    def __init__(self):
-        self.playlists = self.get_playlists()
+    def __init__(self, load_playlists=True):
+        if load_playlists:
+            self.playlists = self.get_playlists()
         self.playlist = None
         self.volume = 100
 
@@ -45,6 +46,10 @@ class Mopidy(object):
     def get_track(self):
         return self.send('core.playback.get_current_tl_track')
 
+    def get_track_name(self):
+        data = self.get_track()
+        return data['result']['track']['name'], data['result']['track']['artists'][0]['name']
+
     def play(self):
         return self.send('core.playback.play')
 
@@ -67,6 +72,10 @@ class Mopidy(object):
     def next_song(self):
         self.send('core.playback.next')
 
+    def time_position(self):
+        return self.send('core.playback.get_time_position')['result']
+
+    # Todo - Not working
     def shuffle(self, shuffle):
         params = {'shuffle':shuffle}
         self.send('core.tracklist.set_shuffle', params=params)
