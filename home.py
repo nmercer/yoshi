@@ -24,10 +24,10 @@ player = Mopidy()
 while True:
     print "Checking If Home"
 
-    batcmd="for X in $(hostname -I) ; do nmap -sP ${X}/24 ; done"
+    batcmd="nmap -sn 192.168.1.3"
     nmap = subprocess.check_output(batcmd, shell=True)
 
-    if nmap.find('192.168.1.3') >= 0:
+    if nmap.find('host up') >= 0:
         print "Found"
         not_home_counter = 0
 
