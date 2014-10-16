@@ -3,9 +3,10 @@ import time
 from mopidy import Mopidy
 
 not_home_counter = 0
+home_counter = 0
+
 print "Downloading Playlists"
 player = Mopidy()
-home_counter = 0
 
 # This could be made smarter by if it goes from Found to Not found
 # if its not found first time, it sets home_counter to 5
@@ -20,27 +21,38 @@ home_counter = 0
 # Something quick that looks for the mac address of the phone
 
 while True:
-	print "Checking If Home"
+    print "Checking If Home"
 
-	batcmd="for X in $(hostname -I) ; do nmap -sP ${X}/24 ; done"
-	nmap = subprocess.check_output(batcmd, shell=True)
+    batcmd="for X in $(hostname -I) ; do nmap -sP ${X}/24 ; done"
+    nmap = subprocess.check_output(batcmd, shell=True)
 
-	if nmap.find('192.168.1.3') >= 0:
-		print "Found" 
-		not_home_counter = 0
-		if home_counter == 0:
-            		state = player.get_state()
-            		if state == 'paused' or state == 'stopped':
-				player.play_new_playlist()
-				subprocess.check_output('wemo switch "main" on', shell=True)
-		home_counter += 1
+    if nmap.find('192.168.1.3') >= 0:
+        print "Found"
+        not_home_counter = 0
 
-        else:
-		print "NOT Found"
-		home_counter = 0
-		not_home_counter += 1
-		if not_home_counter == 15:
-			player.pause()
-			subprocess.check_output('wemo switch "main" off', shell=True)
+        if home_counter == 0:
+            state = player.get_state()
+        if state == 'paused' or state == 'stopped':
+            player.play_new_playlist()
+            subprocess.check_output('wemo switch "main" on', shell=True)
 
-	time.sleep(60)
+        home_counter += 1
+
+    else:
+        print "NOT Found"
+
+        if home_counter > 0:
+            home_counter = -5
+        elif home_counter < 0:
+            home_counter += 1
+
+        not_home_counter += 1
+
+        if not_home_counter == 15:
+            player.pause()
+            subprocess.check_output('wemo switch "main" off', shell=True)
+
+    print home_counter
+    print not_home_counter
+
+    time.sleep(60)
