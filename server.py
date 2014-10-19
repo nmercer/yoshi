@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from mopidy import *
+import subprocess
 
 app = Flask(__name__)
 
@@ -15,6 +16,12 @@ def hello():
         elif request.form.has_key('pause'):
             player = Mopidy()
             player.pause()
+
+        elif request.form.has_key('lights_on'):
+            subprocess.check_output('wemo switch "main" on', shell=True)
+        elif request.form.has_key('lights_off'):
+            subprocess.check_output('wemo switch "main" off', shell=True)
+            
     return render_template('server.html')
 
 if __name__ == "__main__":
