@@ -9,16 +9,15 @@ class Mopidy(object):
 
     def __init__(self, load_playlists=False):
         # Todo - Make this populate in the background
-
-        # self.check_database()        
+        # Todo - Example - Havent been home for 1 hour, run save_playlists
         self.playlists = self.db_fetch('SELECT * FROM Playlists')
 
-        # if load_playlists:
-        #     self.save_playlists()
+        if load_playlists:
+            self.check_database()
+            self.save_playlists()
 
-        # self.playlist = None
-        # self.volume = 100
-        self.play_new_playlist()
+        self.playlist = None
+        self.volume = 100
 
     # Database Stuff
     def save_playlists(self):
@@ -127,12 +126,8 @@ class Mopidy(object):
     def play_new_playlist(self):
         self.clear_tracklist()
         self.playlist = self.get_playlist_tracks(self.get_random_playlist()[1])
-        #songs = []
-        print self.playlist
-        #for song in self.playlist['result']:
-        #    print song
-        #    songs.append(song)
-        print self.add_to_tracklist(self.playlist)
+        self.playlist
+        self.add_to_tracklist(self.playlist)
         self.play()
 
     def next_song(self):
