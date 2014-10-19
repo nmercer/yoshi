@@ -9,7 +9,12 @@ def hello():
         if request.form.has_key('new_playlist'):
             player = Mopidy()
             player.play_new_playlist()
-
+        elif request.form.has_key('play'):
+            player = Mopidy()
+            player.play()
+        elif request.form.has_key('pause'):
+            player = Mopidy()
+            player.pause()
     return render_template('server.html')
 
 if __name__ == "__main__":
