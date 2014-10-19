@@ -7,12 +7,16 @@ MOPIDY_URL = 'http://localhost:6680/mopidy/rpc'
 
 class Mopidy(object):
 
-    def __init__(self, load_playlists=True):
+    def __init__(self, load_playlists=False):
         # Todo - Make this populate in the background
-        self.check_database()
-        
+        self.check_database()        
+        self.playlists = self.db_fetch('SELECT * FROM Playlists')
+
+        print self.playlists
+        print type(self.playlists)
+        print dir(self.playlists)
+
         if load_playlists:
-            self.playlists = self.get_playlists()
             self.save_playlists()
 
         self.playlist = None
@@ -20,34 +24,52 @@ class Mopidy(object):
 
     # Database Stuff
     def save_playlists(self):
-        for playlist in self.playlists:
-            if not self.db("SELECT * FROM playlists WHERE id='%s';" % playlist['uri'], row_exists=True):
-                name = playlist['name'].replace("'", "")
-                self.db("INSERT INTO playlists (name, id) VALUES('%s', '%s')" % (name, playlist['uri']))
+        playlists = self.get_playlists()
 
-    def db(self, query, row_exists=False):
-        print query
+        for playlist in playlists:
+            if not self.db_exists("SELECT * FROM Playlists WHERE id='%s';" % playlist['uri']):
+                name = playlist['name'].replace("'", "")
+                self.db_insert("INSERT INTO Playlists (Name, Id) VALUES('%s', '%s')" % (name, playlist['uri']))
+
+    def db_fetch(self, query):
         conn = sqlite3.connect('playlists.db')
         c = conn.cursor()
         c.execute(query)
 
-        data = None
-        if row_exists:
-            data = c.fetchone()
+        data = c.fetchall()
 
         conn.commit()
         conn.close()
 
         return data
+
+
+    def db_exists(self, query):
+        conn = sqlite3.connect('playlists.db')
+        c = conn.cursor()
+        c.execute(query)
+
+        data = c.fetchone()
+
+        conn.commit()
+        conn.close()
+
+        if data:
+            return True
+        return data
+
+    def db_insert(self, query):
+        conn = sqlite3.connect('playlists.db')
+        c = conn.cursor()
+        c.execute(query)
+        conn.commit()
+        conn.close()
        
     def check_database(self):
         try:
-            self.create_db()
+            self.db_insert('''CREATE TABLE Playlists (Name, Id);''')
         except:
             pass
-
-    def create_db(self):
-        self.db('''CREATE TABLE playlists (name, id);''')
 
     def send(self, method, params={}):
         data = json.dumps({"jsonrpc": "2.0", "id": 1, "method": str(method), "params":params})
