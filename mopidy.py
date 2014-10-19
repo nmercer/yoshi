@@ -9,18 +9,16 @@ class Mopidy(object):
 
     def __init__(self, load_playlists=False):
         # Todo - Make this populate in the background
-        self.check_database()        
-        self.playlists = self.db_fetch('SELECT * FROM Playlists')
 
-        print self.playlists
-        print type(self.playlists)
-        print dir(self.playlists)
+        print self.get_playlist_tracks('spotify:user:nmercer88:playlist:3ml3x3vy9fFW1eQuhkgIFZ')
+        # self.check_database()        
+        # self.playlists = self.db_fetch('SELECT * FROM Playlists')
 
-        if load_playlists:
-            self.save_playlists()
+        # if load_playlists:
+        #     self.save_playlists()
 
-        self.playlist = None
-        self.volume = 100
+        # self.playlist = None
+        # self.volume = 100
 
     # Database Stuff
     def save_playlists(self):
@@ -108,6 +106,10 @@ class Mopidy(object):
     def get_track_name(self):
         data = self.get_track()
         return data['result']['track']['name'], data['result']['track']['artists'][0]['name']
+
+    def get_playlist_tracks(self, uri):
+        params = {'uri':uri}
+        return self.send('core.library.lookup', params=params)
 
     def play(self):
         return self.send('core.playback.play')
