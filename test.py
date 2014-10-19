@@ -1,11 +1,10 @@
 # import subprocess
 # import sys
-# import espeak_py
-from scapy.all import *
-
-print 'started'
-sniff(filter='ether src f8:a9:d0:63:16:d9', prn=lambda x: x.show())
 #foo = subprocess.Popen([sys.executable, "home.py"])
+
+from mopidy import *
+
+x = Mopidy()
 
 #print foo
 # print 'ended' 

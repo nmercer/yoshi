@@ -1,16 +1,53 @@
 import requests
 import json
 import random
+import sqlite3
 
 MOPIDY_URL = 'http://localhost:6680/mopidy/rpc'
 
 class Mopidy(object):
 
     def __init__(self, load_playlists=True):
+        # Todo - Make this populate in the background
+        self.check_database()
+        
         if load_playlists:
             self.playlists = self.get_playlists()
+            self.save_playlists()
+
         self.playlist = None
         self.volume = 100
+
+    # Database Stuff
+    def save_playlists(self):
+        for playlist in self.playlists:
+            if not self.db("SELECT * FROM playlists WHERE id='%s';" % playlist['uri'], row_exists=True):
+                name = playlist['name'].replace("'", "")
+                self.db("INSERT INTO playlists (name, id) VALUES('%s', '%s')" % (name, playlist['uri']))
+
+    def db(self, query, row_exists=False):
+        print query
+        conn = sqlite3.connect('playlists.db')
+        c = conn.cursor()
+        c.execute(query)
+
+        data = None
+        if row_exists:
+            data = c.fetchone()
+
+        conn.commit()
+        conn.close()
+
+        return data
+       
+    def check_database(self):
+        try:
+            self.create_db()
+        except:
+            pass
+
+    def create_db(self):
+        self.db('''CREATE TABLE playlists (name, id);''')
 
     def send(self, method, params={}):
         data = json.dumps({"jsonrpc": "2.0", "id": 1, "method": str(method), "params":params})
