@@ -10,15 +10,15 @@ class Mopidy(object):
     def __init__(self, load_playlists=False):
         # Todo - Make this populate in the background
 
-        print self.get_playlist_tracks('spotify:user:nmercer88:playlist:3ml3x3vy9fFW1eQuhkgIFZ')
         # self.check_database()        
-        # self.playlists = self.db_fetch('SELECT * FROM Playlists')
+        self.playlists = self.db_fetch('SELECT * FROM Playlists')
 
         # if load_playlists:
         #     self.save_playlists()
 
         # self.playlist = None
         # self.volume = 100
+        self.play_new_playlist()
 
     # Database Stuff
     def save_playlists(self):
@@ -88,7 +88,7 @@ class Mopidy(object):
 
     # Todo - Store like last 10 playlist and don't grab any of those
     def get_random_playlist(self):
-        return random.choice(self.playlists)['tracks']
+        return random.choice(self.playlists)
 
     def clear_tracklist(self):
         return self.send('core.tracklist.clear')
@@ -126,8 +126,13 @@ class Mopidy(object):
 
     def play_new_playlist(self):
         self.clear_tracklist()
-        self.playlist = self.get_random_playlist()
-        self.add_to_tracklist(self.playlist)
+        self.playlist = self.get_playlist_tracks(self.get_random_playlist()[1])
+        songs = []
+        for song in self.playlist['result']:
+            print song
+            songs.append(song)
+
+        print self.add_to_tracklist(self.playlist)
         self.play()
 
     def next_song(self):
