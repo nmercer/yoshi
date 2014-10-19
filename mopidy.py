@@ -109,7 +109,7 @@ class Mopidy(object):
 
     def get_playlist_tracks(self, uri):
         params = {'uri':uri}
-        return self.send('core.library.lookup', params=params)
+        return self.send('core.library.lookup', params=params)['result']
 
     def play(self):
         return self.send('core.playback.play')
@@ -127,11 +127,11 @@ class Mopidy(object):
     def play_new_playlist(self):
         self.clear_tracklist()
         self.playlist = self.get_playlist_tracks(self.get_random_playlist()[1])
-        songs = []
-        for song in self.playlist['result']:
-            print song
-            songs.append(song)
-
+        #songs = []
+        print self.playlist
+        #for song in self.playlist['result']:
+        #    print song
+        #    songs.append(song)
         print self.add_to_tracklist(self.playlist)
         self.play()
 
