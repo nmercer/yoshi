@@ -11,5 +11,6 @@ cd /
 cd home/pi/button-play 
 sudo python controller.py &
 sudo python home.py &
+sudo python server.py &
 
 cd /
