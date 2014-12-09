@@ -1,12 +1,17 @@
 import subprocess
 import time
+import sys
 from mopidy import Mopidy
+from logger import Logger
 
+sys.stdout = Logger()
 # Ten Minutes
 OFF_COUNTER = 60
 
 not_home_counter = 0
 home_counter = 0
+
+startup = True
 
 update_playlist = True
 
@@ -32,7 +37,7 @@ while True:
 
         elif home_counter == 0:
             state = player.get_state()
-            if state == 'paused' or state == 'stopped':
+            if state == 'paused' or state == 'stopped' and not startup:
                 subprocess.check_output('wemo switch "light" on', shell=True)
                 player.play_new_playlist()
                 subprocess.check_output('wemo switch "main" on', shell=True)
@@ -56,13 +61,14 @@ while True:
             subprocess.check_output('wemo switch "light" off', shell=True)
 
     # Update playlists at 5:30AM Every Night
-    now = time.gmtime()
-    if update_playlist and now.tm_hour == 10 and now.tm_min == 30:
-        player.save_playlists()
-        update_playlist = False 
-    elif now.tm_hour == 5 and now.tm_min == 0:
-        update_playlist = True
+    #now = time.gmtime()
+    #if update_playlist and now.tm_hour == 10 and now.tm_min == 30:
+    #    player.save_playlists()
+    #    update_playlist = False 
+    #elif now.tm_hour == 5 and now.tm_min == 0:
+    #    update_playlist = True
 
     print home_counter
     print not_home_counter
+    startup = False
     time.sleep(10)
