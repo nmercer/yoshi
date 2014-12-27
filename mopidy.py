@@ -114,7 +114,7 @@ class Mopidy(object):
         return self.send('core.playback.play')
 
     def set_volume(self, volume):
-        self.volume += volume
+        self.volume = volume
         if self.volume < 0:
             self.volume = 0
         elif self.volume > 100:

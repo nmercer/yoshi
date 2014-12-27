@@ -9,11 +9,28 @@ def create_app(configfile=None):
     app = Flask(__name__)
     Bootstrap(app)
 
+    @app.route("/volume", methods = ['GET'])
+    def volume():
+        player = Mopidy()
+        print(int(request.args.get('volume')))
+        player.set_volume(int(request.args.get('volume')))
+        return jsonify({'success':True})
+
+    @app.route("/register", methods = ['GET'])
+    def register():
+        print request.remote_addr
+        return jsonify({'success':True})
+
     @app.route("/random", methods = ['GET'])
     def random():
         player = Mopidy()
         player.play_new_playlist()
         return jsonify({'success':True})
+
+    @app.route("/lights", methods = ['GET'])
+    def lights():
+        subprocess.check_output('wemo switch "main" on', shell=True)
+        subprocess.check_output('wemo switch "light" on', shell=True)
 
     @app.route("/", methods = ['GET', 'POST'])
     def hello():
@@ -37,7 +54,11 @@ def create_app(configfile=None):
                 subprocess.check_output('wemo switch "light" on', shell=True)
             elif request.form.has_key('switch_two_off'):
                 subprocess.check_output('wemo switch "light" off', shell=True)
-             
+            elif request.form.has_key('goodnight'):
+                subprocess.check_output('wemo switch "main" off', shell=True)
+                subprocess.check_output('wemo switch "light" off', shell=True)
+                player = Mopidy()
+                player.pause()
         return render_template('server.html')
 
     return app

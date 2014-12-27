@@ -4,7 +4,8 @@ import sys
 from mopidy import Mopidy
 from logger import Logger
 
-sys.stdout = Logger()
+print 'WTF'
+# sys.stdout = Logger()
 # Ten Minutes
 OFF_COUNTER = 60
 
@@ -23,28 +24,55 @@ player = Mopidy()
 # Something quick that looks for the mac address of the phone
 
 while True:
-    print "Checking If Home"
+    print 'Scanning...'
+    found = False
+    
+    arpcmd="arp -a -n"
+    arp = subprocess.check_output(arpcmd, shell=True)
+    arp_num = arp.find('f8:a9:d0:63:16:d9')
 
-    batcmd="nmap -sn 192.168.1.3"
-    nmap = subprocess.check_output(batcmd, shell=True)
+    print arp_num
 
-    if nmap.find('host up') >= 0:
-        print "Found"
-        not_home_counter = 0
+    if arp_num > 0:
+        ip_found = False
+        ip = ''
+        ip_record = False
 
-        if home_counter < 0:
-            home_counter = 0
+        while not ip_found:
+            if arp[arp_num] == ')':
+                ip_record = True
+            elif arp[arp_num] == '(':
+                ip_found = True
+            elif ip_record:
+                ip = arp[arp_num] + ip
+            elif arp_num < 0:
+                ip = ''
+                ip_found = True
 
-        elif home_counter == 0:
-            state = player.get_state()
-            if state == 'paused' or state == 'stopped' and not startup:
-                subprocess.check_output('wemo switch "light" on', shell=True)
-                player.play_new_playlist()
-                subprocess.check_output('wemo switch "main" on', shell=True)
+            arp_num -= 1
 
-        home_counter += 1
+        print 'IP: %s' % ip
+        batcmd = "nmap -sn %s" % ip
+        nmap = subprocess.check_output(batcmd, shell=True)
 
-    else:
+        if nmap.find('host up') >= 0:
+            found = True
+            print "Found"
+            not_home_counter = 0
+
+            if home_counter < 0:
+                home_counter = 0
+
+            elif home_counter == 0:
+                state = player.get_state()
+                if state == 'paused' or state == 'stopped' and not startup:
+                    subprocess.check_output('wemo switch "light" on', shell=True)
+                    player.play_new_playlist()
+                    subprocess.check_output('wemo switch "main" on', shell=True)
+
+            home_counter += 1
+
+    if not found:
         print "NOT Found"
 
         if home_counter > 0 and not_home_counter == 0:
