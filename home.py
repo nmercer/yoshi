@@ -1,10 +1,10 @@
 import subprocess
 import time
 import sys
+from networking import Networking
 from mopidy import Mopidy
 from logger import Logger
 
-print 'WTF'
 # sys.stdout = Logger()
 # Ten Minutes
 OFF_COUNTER = 60
@@ -19,6 +19,7 @@ update_playlist = True
 print "Downloading Playlists"
 player = Mopidy()
 
+network = Networking()
 # Once above is done lets make it check every like... 5 seconds?
 # We will need a better way to scan the network.
 # Something quick that looks for the mac address of the phone
@@ -26,36 +27,12 @@ player = Mopidy()
 while True:
     print 'Scanning...'
     found = False
+
+    ip = network.mac_to_ip('f8:a9:d0:63:16:d9')
     
-    arpcmd="arp -a -n"
-    arp = subprocess.check_output(arpcmd, shell=True)
-    arp_num = arp.find('f8:a9:d0:63:16:d9')
-
-    print arp_num
-
-    if arp_num > 0:
-        ip_found = False
-        ip = ''
-        ip_record = False
-
-        while not ip_found:
-            if arp[arp_num] == ')':
-                ip_record = True
-            elif arp[arp_num] == '(':
-                ip_found = True
-            elif ip_record:
-                ip = arp[arp_num] + ip
-            elif arp_num < 0:
-                ip = ''
-                ip_found = True
-
-            arp_num -= 1
-
+    if ip and not startup:
         print 'IP: %s' % ip
-        batcmd = "nmap -sn %s" % ip
-        nmap = subprocess.check_output(batcmd, shell=True)
-
-        if nmap.find('host up') >= 0:
+        if network.ip_up(ip):
             found = True
             print "Found"
             not_home_counter = 0

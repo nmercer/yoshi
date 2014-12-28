@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template, request
 from mopidy import *
 from flask_bootstrap import Bootstrap
+from networking import Networking
 import subprocess
 
 #app = Flask(__name__)
@@ -18,6 +19,8 @@ def create_app(configfile=None):
 
     @app.route("/register", methods = ['GET'])
     def register():
+        network = Networking()
+        print network.register_by_ip(request.remote_addr)
         print request.remote_addr
         return jsonify({'success':True})
 
