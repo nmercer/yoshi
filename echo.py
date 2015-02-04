@@ -39,17 +39,18 @@ def main(scheduler):
 
         if lights and not off:
             subprocess.check_output('wemo switch "light" on', shell=True)
-            #subprocess.check_output('wemo switch "main" on', shell=True)
+            subprocess.check_output('wemo switch "main" on', shell=True)
         elif lights and off:
-            #subprocess.check_output('wemo switch "main" off', shell=True)
+            subprocess.check_output('wemo switch "main" off', shell=True)
             subprocess.check_output('wemo switch "light" off', shell=True)        
-        elif next_song:
+        
+        if next_song:
             player.next_song()
-        elif play_song:
+        if play_song:
             player.play()
-        elif pause_song:
+        if pause_song:
             player.pause()
-        elif random_playlist:
+        if random_playlist:
             player.play_new_playlist()
 
     scheduler.enter(5, 1, main, (scheduler,))
