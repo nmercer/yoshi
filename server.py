@@ -2,6 +2,8 @@ from flask import Flask, jsonify, render_template, request
 from mopidy import *
 from flask_bootstrap import Bootstrap
 from networking import Networking
+from datetime import datetime
+from database import Database
 import subprocess
 
 #app = Flask(__name__)
@@ -9,6 +11,13 @@ import subprocess
 def create_app(configfile=None):
     app = Flask(__name__)
     Bootstrap(app)
+
+    @app.route("/temperature", methods = ['GET'])
+    def temperature():
+        temp = 71.8
+        db = Database('temperature.db')
+        db.check('CREATE TABLE Temperature (temperature REAL, created_at timestamp);')
+        db.insert("INSERT INTO Temperature (temperature, created_at) VALUES(%s,%s)" % (temp, datetime.now()))
 
     @app.route("/volume", methods = ['GET'])
     def volume():
@@ -20,9 +29,10 @@ def create_app(configfile=None):
     @app.route("/register", methods = ['GET'])
     def register():
         network = Networking()
-        print network.register_by_ip(request.remote_addr)
-        print request.remote_addr
-        return jsonify({'success':True})
+        if network.register_by_ip(request.remote_addr):
+            return jsonify({'success':True})
+        else:
+            return jsonify({'success':False})
 
     @app.route("/random", methods = ['GET'])
     def random():
@@ -34,6 +44,11 @@ def create_app(configfile=None):
     def lights():
         subprocess.check_output('wemo switch "main" on', shell=True)
         subprocess.check_output('wemo switch "light" on', shell=True)
+
+    @app.route("/lightsoff", methods = ['GET'])
+    def lightsoff():
+        subprocess.check_output('wemo switch "main" off', shell=True)
+        subprocess.check_output('wemo switch "light" off', shell=True)
 
     @app.route("/", methods = ['GET', 'POST'])
     def hello():

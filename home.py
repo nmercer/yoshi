@@ -24,30 +24,32 @@ network = Networking()
 # We will need a better way to scan the network.
 # Something quick that looks for the mac address of the phone
 
+print '-wwwwwwwuuuuuttttt'
+print network.check_macs()
+
 while True:
     print 'Scanning...'
     found = False
 
-    ip = network.mac_to_ip('f8:a9:d0:63:16:d9')
+    mac = network.check_macs()
     
-    if ip and not startup:
-        print 'IP: %s' % ip
-        if network.ip_up(ip):
-            found = True
-            print "Found"
-            not_home_counter = 0
+    if mac and not startup:
+        print 'MAC: %s' % mac
+        found = True
+        print "Found"
+        not_home_counter = 0
 
-            if home_counter < 0:
-                home_counter = 0
+        if home_counter < 0:
+            home_counter = 0
 
-            elif home_counter == 0:
-                state = player.get_state()
-                if state == 'paused' or state == 'stopped' and not startup:
-                    subprocess.check_output('wemo switch "light" on', shell=True)
-                    player.play_new_playlist()
-                    subprocess.check_output('wemo switch "main" on', shell=True)
+        elif home_counter == 0:
+            state = player.get_state()
+            if state == 'paused' or state == 'stopped' and not startup:
+                subprocess.check_output('wemo switch "light" on', shell=True)
+                player.play_new_playlist()
+                subprocess.check_output('wemo switch "main" on', shell=True)
 
-            home_counter += 1
+        home_counter += 1
 
     if not found:
         print "NOT Found"

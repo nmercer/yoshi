@@ -3,6 +3,32 @@ import sqlite3
 from database import Database
 
 class Networking(object):
+    # Todo - Add date_updated to mac list and bumb it here based on when it was seen
+    def check_macs(self):
+        macs = self.get_mac_list()
+        for mac in macs:
+            ip = self.mac_to_ip(mac[0])
+            if ip:
+                if self.ip_up(ip):
+                    return mac[0]
+        return None
+
+    # Sort by date_seen
+    def get_mac_list(self):
+        db = Database('network.db')
+        db.check('CREATE TABLE Macs (mac);')
+        return db.fetch('SELECT * From Macs')
+
+    def remove_by_ip(self, ip):
+        mac = self.ip_to_mac(ip)
+        if not mac:
+            return False
+
+        db = Database('network.db')
+        db.check('CREATE TABLE Macs (mac);')
+        if db.exists("SELECT * FROM Macs WHERE mac='%s';" % mac):
+            pass # Todo - Write db delete function
+
     def register_by_ip(self, ip):
         mac = self.ip_to_mac(ip)
 
